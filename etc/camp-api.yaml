@@ -1,0 +1,48 @@
+Name: camp-api
+Host: 0.0.0.0
+Port: 9999
+Timeout: 0
+
+Nms:
+  Uid: "277810"
+  OpenID: "oX8eK7QMHQMhPzJrBPdv4Tp7iCe0"
+  Token: "06bd7c2a-b9eb-4e94-b9e1-1d621e62c44d"
+  ListId:
+    - "6703616"
+  NtwNum: "92704371"
+  CustomerPhone: "18281985942"
+  CustomerName: "王大锤"
+  Job:
+    Run: true
+    RoomId:
+      - "900090261"
+      - "900090245"
+    RoomDate:
+      - "2024-12-07#2024-12-08"
+      - "2024-12-28#2024-12-29"
+      - "2024-12-21#2024-12-22"
+
+My:
+  Uid: "277810"
+  OpenID: "oSJkJ7bCCzcA-3w5v2uFJjy15Www"
+  Token: "34e291cd-33e1-4adf-a7ba-7731310d5130"
+  ListId:
+    - "6838932"
+    - "6838934"
+    - "6838936"
+  NtwNum: "46879713"
+  CustomerPhone: "18281985942"
+  CustomerName: "王大锤"
+  Job:
+    Run: false
+    RoomId:
+      - "900092188"
+      - "900092169"
+    RoomDate:
+      - "2024-12-07#2024-12-08"
+      - "2024-12-28#2024-12-29"
+      - "2024-12-21#2024-12-22"
+
+Log:
+  Level: "info"
+  Stat: false

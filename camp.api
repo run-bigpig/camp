@@ -1,0 +1,53 @@
+syntax = "v1"
+
+type GetRoomListRequst {
+	Platform      int8   `json:"platform"` // 平台 0柠檬树 1牧云
+	RoomStartDate string `json:"roomStartDate"`
+	RoomEndDate   string `json:"roomEndDate"`
+}
+
+type Room {
+	RoomId   string `json:"roomId"`
+	RoomName string `json:"roomName"`
+}
+
+type GetRoomListResponse {
+	RoomList []*Room `json:"roomList"`
+}
+
+type CommitRoom {
+	RoomStartDate string `json:"roomStartDate"`
+	RoomEndDate   string `json:"roomEndDate"`
+	RoomId        string `json:"roomId"`
+	RoomName      string `json:"roomName"`
+}
+
+type CommitOrderRequest {
+	Platform       int8          `json:"platform"` // 平台 0柠檬树 1牧云
+	CommitRoomList []*CommitRoom `json:"commitRoomList"`
+}
+
+type CommitRoomResult {
+	RoomId   string `json:"roomId"`
+	RoomName string `json:"roomName"`
+	Success  bool   `json:"success"`
+}
+
+type CommitOrderResponse {
+	Result []*CommitRoomResult `json:"result"`
+}
+
+service camp-api {
+	@doc (
+		summary: "获取房间列表"
+	)
+	@handler GetRoomListHandler
+	post /list (GetRoomListRequst) returns (GetRoomListResponse)
+
+	@doc (
+		summary: "提交订单"
+	)
+	@handler CommitOrderHandler
+	post /commitOrder (CommitOrderRequest) returns (CommitOrderResponse)
+}
+
