@@ -15,7 +15,7 @@ func SendRequest(url string, headers map[string]string, data interface{}) ([]byt
 		err error
 	)
 	client := &http.Client{
-		Timeout: time.Second * 50,
+		Timeout: time.Second * 10,
 		Transport: &http.Transport{
 			MaxIdleConns:    10,
 			IdleConnTimeout: time.Second * 10,

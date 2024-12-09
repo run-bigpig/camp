@@ -2,6 +2,7 @@ package logic
 
 import (
 	"camp/internal/config"
+	"camp/internal/consts"
 	"camp/internal/utils"
 	"context"
 	"encoding/json"
@@ -46,8 +47,8 @@ func (l *CommitOrderLogic) CommitOrder(req *types.CommitOrderRequest) (resp *typ
 			}
 			err := l.requestCommit(c, room)
 			if err != nil {
-				l.Logger.Errorf("提交订单失败：%s", err.Error())
 				res.Success = false
+				res.FailReason = err.Error()
 				resultList <- res
 				return
 			}
@@ -85,14 +86,14 @@ func (l *CommitOrderLogic) requestCommit(config *config.CampConfig, room *types.
 		EndDate:                 room.RoomEndDate,
 	}
 	header := map[string]string{
-		"Referer":    Referer,
-		"User-Agent": UserAgent,
+		"Referer":    consts.Referer,
+		"User-Agent": consts.UserAgent,
 		"token":      config.Token,
 		"uid":        config.Uid,
 	}
 	randNum := rand.IntN(9)
 	time.Sleep(time.Duration(randNum) * time.Second)
-	data, err := utils.SendRequest(CommitUrl, header, r)
+	data, err := utils.SendRequest(consts.CommitUrl, header, r)
 	if err != nil {
 		return err
 	}

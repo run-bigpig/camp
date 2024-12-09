@@ -1,8 +1,6 @@
 package main
 
 import (
-	"camp/internal/job"
-	"context"
 	"flag"
 	"fmt"
 
@@ -25,9 +23,8 @@ func main() {
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
 
-	ctx := svc.NewServiceContext(c)
+	ctx := svc.NewServiceContext(&c)
 	handler.RegisterHandlers(server, ctx)
-	job.NewJob(context.TODO(), ctx).Run()
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

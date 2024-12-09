@@ -2,6 +2,7 @@ package logic
 
 import (
 	"camp/internal/config"
+	"camp/internal/consts"
 	"camp/internal/utils"
 	"context"
 	"encoding/json"
@@ -67,8 +68,8 @@ func (l *GetRoomListLogic) requestList(config *config.CampConfig, startDate, end
 		RoomPageSize:     50,
 		ID:               id,
 	}
-	header := map[string]string{"uid": config.Uid, "token": config.Token, "User-Agent": UserAgent, "Referer": Referer}
-	data, err := utils.SendRequest(ListUrl, header, r)
+	header := map[string]string{"uid": config.Uid, "token": config.Token, "User-Agent": consts.UserAgent, "Referer": consts.Referer}
+	data, err := utils.SendRequest(consts.ListUrl, header, r)
 	if err != nil {
 		return nil, err
 	}

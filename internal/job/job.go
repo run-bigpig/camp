@@ -1,13 +1,20 @@
 package job
 
 import (
-	"camp/internal/logic"
-	"camp/internal/svc"
+	"camp/internal/config"
+	"camp/internal/consts"
+	"camp/internal/notice"
 	"camp/internal/types"
+	"camp/internal/utils"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/zeromicro/go-zero/core/logx"
+	"math/rand/v2"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -16,84 +23,124 @@ var platformMap = map[int8]string{
 	1: "牧云",
 }
 
+type JobList struct {
+	list  map[string]*types.Job
+	close map[string]chan bool
+	mu    sync.Mutex
+}
+
 type Job struct {
-	ctx         context.Context
-	svcCtx      *svc.ServiceContext
-	logger      logx.Logger
-	commitOrder *logic.CommitOrderLogic
+	logger  logx.Logger
+	jobList *JobList
+	conf    *config.Config
 }
 
-func NewJob(ctx context.Context, svcCtx *svc.ServiceContext) *Job {
+func NewJob(c *config.Config) *Job {
 	return &Job{
-		ctx:         ctx,
-		svcCtx:      svcCtx,
-		logger:      logx.WithContext(ctx),
-		commitOrder: logic.NewCommitOrderLogic(ctx, svcCtx),
+		conf:    c,
+		logger:  logx.WithContext(context.TODO()),
+		jobList: &JobList{list: make(map[string]*types.Job), close: make(map[string]chan bool), mu: sync.Mutex{}},
 	}
 }
 
-func (l *Job) Run() {
-	l.runMy()
-	l.runNms()
+func (j *Job) AddJob(job *types.OperateJobRequest) error {
+	j.logger.Info("add job")
+	j.jobList.mu.Lock()
+	defer j.jobList.mu.Unlock()
+	jobId := uuid.New().String()
+	j.jobList.list[jobId] = &types.Job{
+		JobId: jobId,
+	}
+	j.jobList.close[jobId] = make(chan bool)
+	go j.commit(job.Platform, job.Interval, job.Room, j.jobList.close[jobId])
+	return nil
 }
 
-func (l *Job) runNms() {
-	if !l.svcCtx.Config.Nms.Job.Run {
-		return
+func (j *Job) DeleteJob(jobId string) error {
+	j.logger.Info("delete job")
+	j.jobList.mu.Lock()
+	defer j.jobList.mu.Unlock()
+	if _, ok := j.jobList.list[jobId]; !ok {
+		return fmt.Errorf("jobId %s不存在", jobId)
 	}
-	roomList := make([]*types.CommitRoom, 0)
-	for _, roomId := range l.svcCtx.Config.Nms.Job.RoomId {
-		for _, roomDate := range l.svcCtx.Config.Nms.Job.RoomDate {
-			dates := strings.Split(roomDate, "#")
-			roomList = append(roomList, &types.CommitRoom{
-				RoomId:        roomId,
-				RoomName:      roomId,
-				RoomStartDate: dates[0],
-				RoomEndDate:   dates[1],
-			})
-		}
-	}
-	go l.commit(0, roomList)
+	j.jobList.close[jobId] <- true
+	delete(j.jobList.list, jobId)
+	delete(j.jobList.close, jobId)
+	return nil
 }
 
-func (l *Job) runMy() {
-	if !l.svcCtx.Config.My.Job.Run {
-		return
+func (j *Job) commit(platform int8, interval int32, room *types.CommitRoom, close chan bool) {
+	ticker := time.NewTicker(time.Second * time.Duration(interval))
+	var campConf *config.CampConfig
+	if platform == 0 {
+		campConf = j.conf.Nms
+	} else {
+		campConf = j.conf.My
 	}
-	roomList := make([]*types.CommitRoom, 0)
-	for _, roomId := range l.svcCtx.Config.My.Job.RoomId {
-		for _, roomDate := range l.svcCtx.Config.My.Job.RoomDate {
-			dates := strings.Split(roomDate, "#")
-			roomList = append(roomList, &types.CommitRoom{
-				RoomId:        roomId,
-				RoomName:      roomId,
-				RoomStartDate: dates[0],
-				RoomEndDate:   dates[1],
-			})
-		}
-	}
-	go l.commit(1, roomList)
-}
-
-func (l *Job) commit(platform int8, roomList []*types.CommitRoom) {
-	ticker := time.NewTicker(time.Second * 60)
 	for {
 		select {
 		case t := <-ticker.C:
-			l.logger.Infof("%s %s开始提交订单", platformMap[platform], t.Format("2006-01-02 15:04:05"))
-			dataList, err := l.commitOrder.CommitOrder(&types.CommitOrderRequest{
-				Platform:       platform,
-				CommitRoomList: roomList,
-			})
+			j.logger.Infof("%s %s开始提交订单", platformMap[platform], t.Format("2006-01-02 15:04:05"))
+			err := j.requestCommit(campConf, room)
 			if err != nil {
-				l.logger.Errorf("%s %s提交订单失败：%s", platformMap[platform], t.Format("2006-01-02 15:04:05"), err.Error())
+				if strings.Contains(err.Error(), "重新登录") {
+					_ = notice.SendMsg(j.conf.WebHook.Url, j.conf.WebHook.Secret, fmt.Sprintf("%s %s %s", platformMap[platform], t.Format("2006-01-02 15:04:05"), err.Error()))
+					return
+				}
+				j.logger.Errorf("%s %s订单提交失败：%s", platformMap[platform], t.Format("2006-01-02 15:04:05"), err.Error())
 				continue
 			}
-			for _, v := range dataList.Result {
-				if v.Success {
-					fmt.Printf("%s %s提交订单成功：%s\n", platformMap[platform], t.Format("2006-01-02 15:04:05"), v.RoomName)
-				}
+			err = notice.SendMsg(j.conf.WebHook.Url, j.conf.WebHook.Secret, fmt.Sprintf("%s %s提交订单成功：%s", platformMap[platform], t.Format("2006-01-02 15:04:05"), room.RoomName))
+			if err != nil {
+				j.logger.Errorf("%s %s提交订单成功，但通知失败：%s", platformMap[platform], t.Format("2006-01-02 15:04:05"), err.Error())
+				return
 			}
+			j.logger.Infof("%s %s提交订单成功：%s", platformMap[platform], t.Format("2006-01-02 15:04:05"), room.RoomName)
+		case <-close:
+			j.logger.Infof("%s %s任务结束", platformMap[platform], time.Now().Format("2006-01-02 15:04:05"))
+			return
 		}
 	}
+}
+
+func (j *Job) requestCommit(config *config.CampConfig, room *types.CommitRoom) error {
+	r := &types.CommitRequest{
+		AppType:                 0,
+		BookingType:             0,
+		BoolPublish:             true,
+		BoolUseContinueLiveInst: false,
+		BoolUseIntegral:         false,
+		Count:                   1,
+		CustomerName:            config.CustomerName,
+		CustomerPhone:           config.CustomerPhone,
+		DiscountInstList:        []interface{}{},
+		NtwNum:                  config.NtwNum,
+		OpenID:                  config.OpenId,
+		PromotionChannel:        3,
+		Remark:                  "",
+		RoomTypeID:              room.RoomId,
+		StartDate:               room.RoomStartDate,
+		EndDate:                 room.RoomEndDate,
+	}
+	header := map[string]string{
+		"Referer":    consts.Referer,
+		"User-Agent": consts.UserAgent,
+		"token":      config.Token,
+		"uid":        config.Uid,
+	}
+	randNum := rand.IntN(9)
+	time.Sleep(time.Duration(randNum) * time.Second)
+	data, err := utils.SendRequest(consts.CommitUrl, header, r)
+	if err != nil {
+		return err
+	}
+	var commitResp types.CommitResponse
+	err = json.Unmarshal(data, &commitResp)
+	if err != nil {
+		return err
+	}
+	if commitResp.Code != "1" {
+		return errors.New(commitResp.Msg)
+	}
+	return nil
 }

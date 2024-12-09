@@ -1,5 +1,7 @@
 syntax = "v1"
 
+type Empty {}
+
 type GetRoomListRequst {
 	Platform      int8   `json:"platform"` // 平台 0柠檬树 1牧云
 	RoomStartDate string `json:"roomStartDate"`
@@ -28,13 +30,44 @@ type CommitOrderRequest {
 }
 
 type CommitRoomResult {
-	RoomId   string `json:"roomId"`
-	RoomName string `json:"roomName"`
-	Success  bool   `json:"success"`
+	RoomId     string `json:"roomId"`
+	RoomName   string `json:"roomName"`
+	Success    bool   `json:"success"`
+	FailReason string `json:"failReason"`
 }
 
 type CommitOrderResponse {
 	Result []*CommitRoomResult `json:"result"`
+}
+
+type RefreshTokenRequest {
+	Platform int8   `json:"platform"` // 平台 0柠檬树 1牧云
+	Token    string `json:"token"`
+}
+
+type RefreshTokenResponse {
+	Token string `json:"token"`
+}
+
+type OperateJobRequest {
+	Operate  string      `json:"operate"` // 操作类型 add delete
+	JobId    string      `json:"jobId,optional"`
+	Platform int8        `json:"platform,optional"`
+	Interval int32       `json:"interval,optional"` //间隔时间 单位秒
+	Room     *CommitRoom `json:"room,optional"`
+}
+
+type OperateJobListRequest {}
+
+type Job {
+	JobId    string      `json:"jobId"`
+	Room     *CommitRoom `json:"room"`
+	Interval int32       `json:"interval"`
+	Platform int8        `json:"platform"`
+}
+
+type OperateJobListResponse {
+	List []*Job `json:"list"`
 }
 
 service camp-api {
@@ -49,5 +82,23 @@ service camp-api {
 	)
 	@handler CommitOrderHandler
 	post /commitOrder (CommitOrderRequest) returns (CommitOrderResponse)
+
+	@doc (
+		summary: "刷新token"
+	)
+	@handler RefreshTokenHandler
+	post /refreshToken (RefreshTokenRequest) returns (RefreshTokenResponse)
+
+	@doc (
+		summary: "操作任务"
+	)
+	@handler OperateJobHandler
+	post /operateJob (OperateJobRequest) returns (Empty)
+
+	@doc (
+		summary: "获取任务列表"
+	)
+	@handler OperateJobListHandler
+	post /operateJobList (OperateJobListRequest) returns (OperateJobListResponse)
 }
 

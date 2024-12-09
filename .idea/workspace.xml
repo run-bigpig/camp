@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4b2a3af2-13a2-428d-8ebf-229c79bb3afc" name="更改" comment="" />
+    <list default="true" id="4b2a3af2-13a2-428d-8ebf-229c79bb3afc" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/camp.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/handler/refreshtokenhandler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/logic/refreshtokenlogic.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/notice/notice.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/camp.api" beforeDir="false" afterPath="$PROJECT_DIR$/camp.api" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/camp.go" beforeDir="false" afterPath="$PROJECT_DIR$/camp.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/etc/camp-api.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/etc/camp-api.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handler/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handler/routes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/job/job.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/job/job.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/logic/commitorderlogic.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/logic/commitorderlogic.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/logic/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/logic/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/logic/getroomlistlogic.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/logic/getroomlistlogic.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/svc/servicecontext.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/svc/servicecontext.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/types/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/types/types.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/utils/request.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/utils/request.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,30 +38,48 @@
     </option>
   </component>
   <component name="GOROOT" url="file://C:/Program Files/Go" />
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;run-bigpig&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/run-bigpig/camp.git&quot;,
+    &quot;accountId&quot;: &quot;6bdbdb09-6903-4f84-af64-c4ce59219b4f&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2oBTYkqymELU2x8jaly9qiWQm4j" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go 构建.camp.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "E:/program/camp",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go 构建.camp.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/program/camp&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;application.passwordSafe&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\program\camp" />
@@ -57,6 +95,14 @@
       <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-33c477a475b1-e0158606a674-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-241.18034.61" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-GO-241.18034.61" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
